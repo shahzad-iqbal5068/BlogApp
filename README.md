@@ -1,36 +1,113 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BlogApp
+
+A modern blog platform built with Next.js 16, featuring authentication, rich content editing, and AI-powered features.
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **Auth:** Auth.js (NextAuth v5) with JWT, Credentials, Google & GitHub OAuth
+- **Database:** SQLite + Prisma
+- **Styling:** Tailwind CSS v4
+- **Editor:** Tiptap (rich text)
+- **Images:** Uploadthing
+- **AI:** OpenAI API
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- pnpm (or npm/yarn)
+
+### Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Install dependencies
+pnpm install
+
+# Create .env.local (copy from below)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create `.env.local` in the project root:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+# Database (SQLite for dev)
+DATABASE_URL="file:./dev.db"
 
-## Learn More
+# Auth (required)
+NEXTAUTH_URL="http://localhost:3000"
+AUTH_SECRET="your-secret"  # Generate: openssl rand -base64 32
 
-To learn more about Next.js, take a look at the following resources:
+# OAuth (optional)
+# GOOGLE_CLIENT_ID=
+# GOOGLE_CLIENT_SECRET=
+# GITHUB_ID=
+# GITHUB_SECRET=
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Optional services
+# UPLOADTHING_TOKEN=
+# OPENAI_API_KEY=
+# RESEND_API_KEY=
+# CRON_SECRET=
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Database Setup
 
-## Deploy on Vercel
+```bash
+# Create tables
+pnpm prisma db push
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Seed with admin user and sample posts
+pnpm prisma db seed
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Seed credentials:**
+- Email: `admin@blogapp.com`
+- Password: `admin123`
+
+### Run Development Server
+
+```bash
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Start dev server |
+| `pnpm build` | Production build |
+| `pnpm start` | Start production server |
+| `pnpm prisma studio` | Open database GUI |
+| `pnpm db:push` | Sync schema to database |
+| `pnpm db:seed` | Seed database |
+
+## Features
+
+- **Public:** Home, blog list, post detail, about
+- **Auth:** Register, login (email/password, Google, GitHub)
+- **Roles:** READER, AUTHOR, ADMIN
+- **Posts:** Create, edit, publish, drafts, categories, tags
+- **Rich editor:** Tiptap with markdown support
+- **Images:** Cover images via Uploadthing
+- **Newsletter:** Resend integration
+- **PWA:** Installable, offline support
+
+## Project Structure
+
+```
+src/
+├── app/           # App Router pages & API routes
+├── components/    # React components
+├── lib/           # Prisma, utils, posts helpers
+├── auth.ts        # Auth.js config
+└── middleware.ts  # Route protection
+```
+
+## License
+
+MIT

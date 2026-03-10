@@ -1,64 +1,106 @@
 import Image from "next/image";
+import Link from "next/link";
+import { getRecentPosts } from "@/lib/posts";
 
-export default function Home() {
+export default async function Home() {
+  const posts = await getRecentPosts(6);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen bg-white dark:bg-[#0F172A]">
+      <main className="mx-auto max-w-4xl px-6 py-16 sm:px-8">
+        {/* Hero */}
+        <section className="mb-20 text-center">
+          <h1 className="font-heading mb-4 text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-50 sm:text-5xl">
+            Welcome to BlogApp
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-slate-600 dark:text-slate-400">
+            Discover stories, ideas, and insights. We write about technology,
+            tutorials, and building things with modern tools.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/blog"
+            className="mt-8 inline-flex h-12 items-center justify-center rounded-lg bg-[#3B82F6] px-6 font-medium text-white transition-colors duration-200 hover:bg-[#2563eb]"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+            Browse all posts
+          </Link>
+        </section>
+
+        {/* Recent posts */}
+        <section>
+          <h2 className="font-heading mb-8 text-2xl font-semibold text-slate-900 dark:text-slate-50">
+            Recent posts
+          </h2>
+          {posts.length === 0 ? (
+            <p className="rounded-xl border border-dashed border-slate-200 bg-slate-50/50 px-8 py-12 text-center text-slate-600 dark:border-slate-700 dark:bg-slate-900/30 dark:text-slate-400">
+              No posts yet. Check back soon or{" "}
+              <Link href="/blog" className="text-[#3B82F6] hover:underline">
+                explore the blog
+              </Link>
+              .
+            </p>
+          ) : (
+            <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+              {posts.map((post) => (
+                <article
+                  key={post.slug}
+                  className="group rounded-xl border border-slate-200 bg-white p-4 transition-shadow hover:shadow-lg dark:border-slate-700 dark:bg-slate-900/30 dark:hover:border-slate-600"
+                >
+                  <Link href={`/blog/${post.slug}`} className="block">
+                    {post.coverImage && (
+                      <div className="mb-4 overflow-hidden rounded-lg">
+                        <Image
+                          src={post.coverImage}
+                          alt={post.title}
+                          width={400}
+                          height={220}
+                          className="h-44 w-full object-cover transition-transform duration-200 group-hover:scale-105"
+                        />
+                      </div>
+                    )}
+                    <h3 className="font-heading text-lg font-semibold text-slate-900 transition-colors group-hover:text-[#3B82F6] dark:text-slate-50 dark:group-hover:text-[#3B82F6]">
+                      {post.title}
+                    </h3>
+                  </Link>
+                  {post.excerpt && (
+                    <p className="mt-2 line-clamp-2 text-sm text-slate-600 dark:text-slate-400">
+                      {post.excerpt}
+                    </p>
+                  )}
+                  <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+                    <span>{post.author?.name || "Anonymous"}</span>
+                    {post.publishedAt && (
+                      <span>
+                        {new Date(post.publishedAt).toLocaleDateString()}
+                      </span>
+                    )}
+                    {post.readingTime && (
+                      <span>{post.readingTime} min read</span>
+                    )}
+                    {post.category && (
+                      <Link
+                        href={`/blog?category=${post.category.slug}`}
+                        className="text-[#3B82F6] hover:underline"
+                      >
+                        {post.category.name}
+                      </Link>
+                    )}
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+          {posts.length > 0 && (
+            <div className="mt-12 text-center">
+              <Link
+                href="/blog"
+                className="inline-flex items-center gap-2 text-[#3B82F6] font-medium hover:underline"
+              >
+                View all posts
+                <span aria-hidden>→</span>
+              </Link>
+            </div>
+          )}
+        </section>
       </main>
     </div>
   );

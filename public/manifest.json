@@ -1,0 +1,10 @@
+{
+  "name": "BlogApp",
+  "short_name": "BlogApp",
+  "description": "A modern blog with AI features",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3B82F6",
+  "icons": []
+}
